@@ -1,113 +1,158 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getDashboardStats } from '../services/api';
 
 const Dashboard = () => {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    userCount: 0,
+    projectsCount: 0,
+    tasksCount: 0,
+    completedTasks: 0,
+    dbConnected: false
+  });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const data = await getDashboardStats();
-        setStats(data);
-        setError(null);
-      } catch (err) {
-        setError('فشل في تحميل البيانات');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStats();
   }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const data = await getDashboardStats();
+      setStats(data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-xl">جاري التحميل...</div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (error) {
   return (
-    <div className="p-6">
-      <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mb-6">
-        <h2 className="font-bold text-lg mb-2">❌ خطأ في تحميل البيانات</h2>
-        <p className="mb-4">{error}</p>
-        <div className="bg-white p-4 rounded border border-red-300">
-          <h3 className="font-bold mb-2">🔧 خطوات التشخيص:</h3>
-          <ul className="list-disc list-inside space-y-1 text-sm">
-            <li>تأكد من أن الباك إند شغال على http://localhost:3000</li>
-            <li>افتح http://localhost:3000/api/health في متصفح منفصل</li>
-            <li>شوف إذا كانت قاعدة البيانات متصلة</li>
-            <li>إذا كنت تستخدم PowerShell، تأكد من عدم وجود أخطاء في نافذة الباك إند</li>
-          </ul>
-        </div>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          🔄 إعادة تحميل الصفحة
-        </button>
+    <div className="p-6" dir="rtl">
+      {/* رأس الصفحة */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">لوحة التحكم</h1>
+        <p className="text-gray-600 mt-2">نظرة عامة على المشاريع والمهام</p>
       </div>
-    </div>
-  );
-}
 
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">لوحة التحكم</h1>
-      
-      {/* بطاقات الإحصائيات */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-gray-500 text-sm">عدد المستخدمين</h2>
-          <p className="text-3xl font-bold">{stats?.userCount || 0}</p>
-        </div>
-        
-       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-gray-500 text-sm">حالة قاعدة البيانات</h2>
-        <p className={`text-xl font-bold ${stats.dbConnected ? 'text-green-600' : 'text-red-600'}`}>
-          {stats.dbConnected ? '✅ متصلة' : '❌ غير متصلة'}
-        </p>
-      </div>
-        
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-gray-500 text-sm">عدد المجموعات</h2>
-          <p className="text-3xl font-bold">{stats?.collections?.length || 0}</p>
-        </div>
-      </div>
-      
-      {/* قائمة المجموعات */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold mb-4">المجموعات في قاعدة البيانات</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {stats?.collections?.map((col, index) => (
-            <div key={index} className="bg-gray-50 p-3 rounded border">
-              {col.name}
+      {/* بطاقات الإحصائيات الرئيسية */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* المستخدمين */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-r-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">المستخدمين</p>
+              <p className="text-3xl font-bold text-gray-800">{stats.userCount}</p>
             </div>
-          ))}
+            <div className="bg-blue-100 p-3 rounded-full">
+              <span className="text-2xl">👥</span>
+            </div>
+          </div>
+          <Link to="/teams" className="text-sm text-blue-600 hover:text-blue-800 mt-3 inline-block">
+            عرض جميع الفرق →
+          </Link>
+        </div>
+
+        {/* المشاريع */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-r-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">المشاريع</p>
+              <p className="text-3xl font-bold text-gray-800">{stats.projectsCount}</p>
+            </div>
+            <div className="bg-green-100 p-3 rounded-full">
+              <span className="text-2xl">📁</span>
+            </div>
+          </div>
+          <Link to="/projects" className="text-sm text-green-600 hover:text-green-800 mt-3 inline-block">
+            عرض جميع المشاريع →
+          </Link>
+        </div>
+
+        {/* المهام */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-r-4 border-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">المهام</p>
+              <p className="text-3xl font-bold text-gray-800">{stats.tasksCount}</p>
+            </div>
+            <div className="bg-purple-100 p-3 rounded-full">
+              <span className="text-2xl">✅</span>
+            </div>
+          </div>
+          <Link to="/tasks" className="text-sm text-purple-600 hover:text-purple-800 mt-3 inline-block">
+            عرض جميع المهام →
+          </Link>
+        </div>
+
+        {/* المهام المكتملة */}
+        <div className="bg-white rounded-lg shadow-lg p-6 border-r-4 border-yellow-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm">مهام مكتملة</p>
+              <p className="text-3xl font-bold text-gray-800">{stats.completedTasks}</p>
+            </div>
+            <div className="bg-yellow-100 p-3 rounded-full">
+              <span className="text-2xl">🏆</span>
+            </div>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+            <div 
+              className="bg-green-500 h-2 rounded-full" 
+              style={{ width: stats.tasksCount ? `${(stats.completedTasks / stats.tasksCount) * 100}%` : '0%' }}
+            ></div>
+          </div>
         </div>
       </div>
-      
+
       {/* أزرار الإجراءات السريعة */}
-      <div className="mt-8 flex gap-4">
-        <button 
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-          onClick={() => window.location.href = '/projects/new'}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <Link 
+          to="/projects" 
+          className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
         >
-          + مشروع جديد
-        </button>
-        <button 
-          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
-          onClick={() => window.location.href = '/tasks/new'}
+          <span className="text-lg font-semibold">➕ مشروع جديد</span>
+          <span className="text-3xl">📁</span>
+        </Link>
+        
+        <Link 
+          to="/tasks" 
+          className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
         >
-          + مهمة جديدة
-        </button>
+          <span className="text-lg font-semibold">➕ مهمة جديدة</span>
+          <span className="text-3xl">✅</span>
+        </Link>
+        
+        <Link 
+          to="/teams" 
+          className="bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
+        >
+          <span className="text-lg font-semibold">➕ فريق جديد</span>
+          <span className="text-3xl">👥</span>
+        </Link>
+      </div>
+
+      {/* حالة قاعدة البيانات */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">حالة النظام</h2>
+        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3">
+            <div className={`w-3 h-3 rounded-full ${stats.dbConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <span className="text-gray-700">قاعدة البيانات</span>
+          </div>
+          <span className={`font-semibold ${stats.dbConnected ? 'text-green-600' : 'text-red-600'}`}>
+            {stats.dbConnected ? '✅ متصلة' : '❌ غير متصلة'}
+          </span>
+        </div>
       </div>
     </div>
   );

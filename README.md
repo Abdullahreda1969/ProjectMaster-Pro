@@ -70,3 +70,5 @@ MIT
 ---
 
 ⭐️ إذا أعجبك المشروع، لا تنسى وضع نجمة على GitHub! ⭐️# ProjectMaster-Pro
+![GitHub last commit](https://img.shields.io/github/last-commit/Abdullahreda1969/ProjectMaster-Pro)
+![GitHub stars](https://img.shields.io/github/stars/Abdullahreda1969/ProjectMaster-Pro?style=social)
