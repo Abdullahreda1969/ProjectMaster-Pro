@@ -6,6 +6,8 @@ import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
 import Teams from './pages/Teams';
 import Invoices from './pages/Invoices';
+import FarmMap from './pages/farm/FarmMap';
+import FarmDetails from './pages/farm/FarmDetails';
 
 function App() {
   return (
@@ -77,6 +79,8 @@ function App() {
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/teams" element={<Teams />} />
             <Route path="/invoices" element={<Invoices />} />
+            <Route path="/farm" element={<FarmMap />} />
+            <Route path="/farm/:id" element={<FarmDetails />} />
           </Routes>
         </main>
       </div>

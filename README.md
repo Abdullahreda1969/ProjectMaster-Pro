@@ -42,6 +42,12 @@ npm install
 npm run dev
 افتح المتصفح
 
+في نهاية كل يوم عمل
+# حفظ كل التغييرات قبل الإغلاق
+git add .
+git commit -m "🔨 حفظ آخر التغييرات"
+git push
+
 الواجهة: http://localhost:3001
 
 API: http://localhost:3000/api

@@ -1048,6 +1048,10 @@ app.get('/api/tasks/stats', async (req, res) => {
         }
     });
 
+    // ==================== FARM ROUTES ====================
+    const farmRoutes = require('./routes/farms');
+    app.use('/api/farms', farmRoutes);
+
     // ==================== ERROR HANDLING ====================
 
     // 404 Handler
@@ -1076,7 +1080,13 @@ app.get('/api/tasks/stats', async (req, res) => {
                 'POST /api/tasks               - Create task',
                 'GET  /api/invoices           - Get all invoices',
                 'GET  /api/invoices/stats     - Invoice statistics',
-                'POST /api/invoices            - Create invoice'
+                'POST /api/invoices            - Create invoice',
+                'GET  /api/farms              - Get all farms',
+                'POST /api/farms              - Add new farm',
+                'GET  /api/farms/:id          - Get farm details',
+                'GET  /api/farms/:id/ndvi     - Get NDVI readings',
+                'POST /api/farms/:id/ndvi     - Add NDVI reading',
+                'GET  /api/farms/:id/weather  - Get weather records'
             ]
         });
     });
