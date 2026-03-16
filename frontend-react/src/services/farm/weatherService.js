@@ -1,15 +1,14 @@
 import axios from 'axios';
 
-// استخدم مفتاح API من متغيرات البيئة
-const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY; // اقرأ المفتاح من .env
-const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5';
+const WEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || '15301dd11cee3b2bb4aa9004a5167bed';
+const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
-// جلب الطقس الحالي لموقع معين
+// جلب الطقس الحالي
 export const getCurrentWeather = async (lat, lng) => {
     try {
-        console.log('🔍 API Key from env:', WEATHER_API_KEY); // للتصحيح
+        console.log('🌤️ جلب الطقس الحالي:', lat, lng);
         
-        const response = await axios.get(`${WEATHER_API_URL}/weather`, {
+        const response = await axios.get(`${BASE_URL}/weather`, {
             params: {
                 lat: lat,
                 lon: lng,
@@ -20,26 +19,21 @@ export const getCurrentWeather = async (lat, lng) => {
         });
         
         return {
-            temp: response.data.main.temp,
-            feelsLike: response.data.main.feels_like,
+            temp: Math.round(response.data.main.temp),
+            feelsLike: Math.round(response.data.main.feels_like),
             humidity: response.data.main.humidity,
             pressure: response.data.main.pressure,
             windSpeed: response.data.wind.speed,
-            windDeg: response.data.wind.deg,
             condition: response.data.weather[0].description,
-            icon: response.data.weather[0].icon,
-            clouds: response.data.clouds.all
+            icon: response.data.weather[0].icon
         };
     } catch (error) {
-        console.error('❌ خطأ في جلب الطقس:', error);
-        // بيانات تجريبية في حالة فشل الاتصال
+        console.error('❌ خطأ في جلب الطقس الحالي:', error);
         return {
             temp: 22,
-            feelsLike: 21,
             humidity: 45,
             windSpeed: 12,
-            condition: 'غائم جزئي',
-            icon: '03d'
+            condition: 'غائم جزئي'
         };
     }
 };
@@ -47,24 +41,50 @@ export const getCurrentWeather = async (lat, lng) => {
 // جلب توقعات 5 أيام
 export const getWeatherForecast = async (lat, lng) => {
     try {
-        const response = await axios.get(`${WEATHER_API_URL}/forecast`, {
+        console.log('📅 جلب توقعات 5 أيام:', lat, lng);
+        
+        const response = await axios.get(`${BASE_URL}/forecast`, {
             params: {
                 lat: lat,
                 lon: lng,
                 appid: WEATHER_API_KEY,
                 units: 'metric',
                 lang: 'ar',
-                cnt: 5
+                cnt: 40 // نطلب عدد كافي من التوقعات
             }
         });
         
-        return response.data.list.map(item => ({
-            date: new Date(item.dt * 1000),
-            temp: item.main.temp,
-            humidity: item.main.humidity,
-            condition: item.weather[0].description,
-            icon: item.weather[0].icon
-        }));
+        // تجميع التوقعات حسب اليوم
+        const dailyForecast = [];
+        const seenDates = new Set();
+        
+        response.data.list.forEach(item => {
+            const date = new Date(item.dt * 1000);
+            const dateKey = date.toDateString(); // "Sat Mar 14 2026"
+            
+            // إذا لم نر هذا التاريخ من قبل، نضيفه
+            if (!seenDates.has(dateKey)) {
+                seenDates.add(dateKey);
+                
+                dailyForecast.push({
+                    date: date,
+                    temp: Math.round(item.main.temp),
+                    condition: item.weather[0].description,
+                    icon: item.weather[0].icon
+                });
+            }
+        });
+        
+        // نأخذ أول 5 أيام فقط
+        const result = dailyForecast.slice(0, 5);
+        
+        console.log('✅ التوقعات اليومية:', result.map(d => ({
+            تاريخ: d.date.toLocaleDateString('ar-EG'),
+            يوم: ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'][d.date.getDay()],
+            درجة: d.temp
+        })));
+        
+        return result;
     } catch (error) {
         console.error('❌ خطأ في جلب التوقعات:', error);
         return [];

@@ -144,21 +144,37 @@ const Invoices = () => {
     // إرسال النموذج
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // التحقق من الحقول المطلوبة
+    
+        // التحقق من البيانات المطلوبة
         if (!formData.clientName || !formData.amount || !formData.dueDate) {
             toast.error('الرجاء إدخال البيانات المطلوبة');
             return;
         }
         
+        // تجهيز البيانات للإرسال
+        const invoiceData = {
+            clientName: formData.clientName,
+            clientEmail: formData.clientEmail || '',
+            clientPhone: formData.clientPhone || '',
+            projectId: formData.projectId || null, // إذا كان فارغاً أرسل null
+            projectName: formData.projectName || '',
+            amount: Number(formData.amount),
+            status: formData.status || 'draft',
+            issueDate: formData.issueDate || new Date().toISOString().split('T')[0],
+            dueDate: formData.dueDate,
+            notes: formData.notes || ''
+        };
+        
+        console.log('📤 إرسال بيانات الفاتورة:', invoiceData);
+        
         try {
             let response;
             
             if (editingInvoice) {
-                response = await updateInvoice(editingInvoice._id, formData);
+                response = await updateInvoice(editingInvoice._id, invoiceData);
                 if (response.success) toast.success('تم تحديث الفاتورة');
             } else {
-                response = await createInvoice(formData);
+                response = await createInvoice(invoiceData);
                 if (response.success) toast.success('تم إنشاء الفاتورة');
             }
             
@@ -171,7 +187,6 @@ const Invoices = () => {
             toast.error(editingInvoice ? 'فشل في التحديث' : 'فشل في الإنشاء');
         }
     };
-
     // تنسيق العملة
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('ar-SA', {

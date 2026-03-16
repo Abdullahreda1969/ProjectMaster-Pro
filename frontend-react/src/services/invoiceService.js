@@ -25,6 +25,7 @@ export const getInvoiceById = async (id) => {
 // إنشاء فاتورة جديدة
 export const createInvoice = async (invoiceData) => {
     try {
+        console.log('📤 إرسال بيانات الفاتورة:', invoiceData);
         const response = await api.post('/invoices', invoiceData);
         return response.data;
     } catch (error) {

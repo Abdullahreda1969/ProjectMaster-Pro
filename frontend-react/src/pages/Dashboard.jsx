@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getDashboardStats } from '../services/api';
+import { getFarms } from '../services/farm/farmService';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -11,10 +12,25 @@ const Dashboard = () => {
     dbConnected: false
   });
   const [loading, setLoading] = useState(true);
+  const [farmStats, setFarmStats] = useState({ total: 0, healthy: 0 });
 
   useEffect(() => {
     fetchStats();
   }, []);
+
+  useEffect(() => {
+      const loadFarmStats = async () => {
+          try {
+              const farms = await getFarms();
+              const healthy = farms.filter(f => f.ndvi > 0.7).length;
+              setFarmStats({ total: farms.length, healthy });
+          } catch (error) {
+              console.error('Error loading farm stats:', error);
+          }
+      };
+      loadFarmStats();
+  }, []);
+
 
   const fetchStats = async () => {
     try {
@@ -112,33 +128,59 @@ const Dashboard = () => {
             ></div>
           </div>
         </div>
+
+        // ثم أضف هذه البطاقة في قسم الإحصائيات
+        <div className="bg-white rounded-lg shadow p-6 border-r-4 border-emerald-500">
+          <div className="flex items-center justify-between">
+              <div>
+                  <p className="text-gray-500 text-sm">مزارع البطاطا</p>
+                  <p className="text-3xl font-bold text-gray-800">{farmStats.total}</p>
+                  <p className="text-sm text-emerald-600">{farmStats.healthy} بصحة ممتازة</p>
+              </div>
+              <div className="bg-emerald-100 p-3 rounded-full">
+                  <span className="text-2xl">🌾</span>
+              </div>
+          </div>
+          <Link to="/farm" className="text-sm text-emerald-600 hover:text-emerald-800 mt-3 inline-block">
+              عرض الخريطة ←
+          </Link>
+        </div>
       </div>
 
       {/* أزرار الإجراءات السريعة */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Link 
-          to="/projects" 
-          className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
-        >
-          <span className="text-lg font-semibold">➕ مشروع جديد</span>
-          <span className="text-3xl">📁</span>
-        </Link>
-        
-        <Link 
-          to="/tasks" 
-          className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
-        >
-          <span className="text-lg font-semibold">➕ مهمة جديدة</span>
-          <span className="text-3xl">✅</span>
-        </Link>
-        
-        <Link 
-          to="/teams" 
-          className="bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
-        >
-          <span className="text-lg font-semibold">➕ فريق جديد</span>
-          <span className="text-3xl">👥</span>
-        </Link>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Link 
+              to="/projects" 
+              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
+          >
+              <span className="text-lg font-semibold">➕ مشروع جديد</span>
+              <span className="text-3xl">📁</span>
+          </Link>
+          
+          <Link 
+              to="/tasks" 
+              className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
+          >
+              <span className="text-lg font-semibold">➕ مهمة جديدة</span>
+              <span className="text-3xl">✅</span>
+          </Link>
+          
+          <Link 
+              to="/teams" 
+              className="bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
+          >
+              <span className="text-lg font-semibold">➕ فريق جديد</span>
+              <span className="text-3xl">👥</span>
+          </Link>
+
+          {/* الرابط الجديد للمشروع الزراعي */}
+          <Link 
+              to="/farm" 
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg p-4 hover:shadow-lg transition flex items-center justify-between"
+          >
+              <span className="text-lg font-semibold">🗺️ خريطة المزارع</span>
+              <span className="text-3xl">🌾</span>
+          </Link>
       </div>
 
       {/* حالة قاعدة البيانات */}

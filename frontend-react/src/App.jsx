@@ -79,7 +79,15 @@ function App() {
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/teams" element={<Teams />} />
             <Route path="/invoices" element={<Invoices />} />
-            <Route path="/farm" element={<FarmMap />} />
+
+            <Route 
+                path="/farm" 
+                element={
+                    <React.Suspense fallback={<div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div></div>}>
+                        <FarmMap key={location.key} />
+                    </React.Suspense>
+                } 
+            />   
             <Route path="/farm/:id" element={<FarmDetails />} />
           </Routes>
         </main>

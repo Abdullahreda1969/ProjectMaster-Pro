@@ -1,10 +1,10 @@
 ﻿// backend/server.js - MongoDB Atlas Ready
+require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config();
 
 // تنظيف النماذج المكررة
 Object.keys(mongoose.models).forEach(key => {
@@ -471,41 +471,45 @@ function startExpressServer(dbConnected = true) {
 
     // GET /api/projects/stats - إحصائيات المشاريع
     app.get('/api/projects/stats', async (req, res) => {
-        try {
-            if (!dbConnected) {
-                return res.status(503).json({
-                    success: false,
-                    message: 'قاعدة البيانات غير متصلة'
-                });
-            }
-            
-            const total = await Project.countDocuments();
-            const active = await Project.countDocuments({ status: 'active' });
-            const completed = await Project.countDocuments({ status: 'completed' });
-            const onHold = await Project.countDocuments({ status: 'on-hold' });
-            
-            const projects = await Project.find();
-            const totalBudget = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
-            
-            res.json({
-                success: true,
-                stats: {
-                    total,
-                    active,
-                    completed,
-                    onHold,
-                    totalBudget
-                }
-            });
-        } catch (error) {
-            console.error('Error in GET /api/projects/stats:', error);
-            res.status(500).json({
+    console.time('projects-stats'); // <-- أضف هذا السطر هنا
+    try {
+        if (!dbConnected) {
+            return res.status(503).json({
                 success: false,
-                message: 'خطأ في جلب إحصائيات المشاريع',
-                error: error.message
+                message: 'قاعدة البيانات غير متصلة'
             });
         }
-    });
+        
+        const total = await Project.countDocuments();
+        const active = await Project.countDocuments({ status: 'active' });
+        const completed = await Project.countDocuments({ status: 'completed' });
+        const onHold = await Project.countDocuments({ status: 'on-hold' });
+        
+        const projects = await Project.find();
+        const totalBudget = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
+        
+        console.timeEnd('projects-stats'); // <-- أضف هذا السطر هنا
+        
+        res.json({
+            success: true,
+            stats: {
+                total,
+                active,
+                completed,
+                onHold,
+                totalBudget
+            }
+        });
+    } catch (error) {
+        console.timeEnd('projects-stats'); // <-- وأيضاً هنا في حالة الخطأ
+        console.error('Error in GET /api/projects/stats:', error);
+        res.status(500).json({
+            success: false,
+            message: 'خطأ في جلب إحصائيات المشاريع',
+            error: error.message
+        });
+    }
+});
 
     // POST /api/projects - إنشاء مشروع جديد
     app.post('/api/projects', express.json(), async (req, res) => {
@@ -792,8 +796,8 @@ app.delete('/api/tasks/:id', async (req, res) => {
     }
 });
 
-// GET /api/tasks/stats - إحصائيات المهام
 app.get('/api/tasks/stats', async (req, res) => {
+    console.time('tasks-stats'); // <-- أضف هذا السطر هنا
     try {
         if (!dbConnected) {
             return res.status(503).json({ success: false, message: 'قاعدة البيانات غير متصلة' });
@@ -804,56 +808,57 @@ app.get('/api/tasks/stats', async (req, res) => {
         const inProgress = await Task.countDocuments({ status: 'in-progress' });
         const pending = await Task.countDocuments({ status: 'pending' });
         
+        console.timeEnd('tasks-stats'); // <-- أضف هذا السطر هنا
+        
         res.json({
             success: true,
             stats: { total, completed, inProgress, pending, highPriority: 0, overdue: 0 }
         });
     } catch (error) {
+        console.timeEnd('tasks-stats'); // <-- وأيضاً هنا في حالة الخطأ
         console.error('Error in GET /api/tasks/stats:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب إحصائيات المهام', error: error.message });
     }
 });
 
     // ==================== INVOICES ROUTES ====================
-
-    // تعريف نموذج الفاتورة
-    let Invoice;
-    try {
-        Invoice = mongoose.model('Invoice');
-    } catch (error) {
-        const invoiceSchema = new mongoose.Schema({
-            invoiceNumber: { type: String, unique: true },
-            clientName: String,
-            clientEmail: String,
-            clientPhone: String,
-            projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
-            projectName: String,
-            items: [{
-                description: String,
-                quantity: Number,
-                unitPrice: Number,
-                total: Number
-            }],
-            subtotal: Number,
-            taxRate: Number,
-            taxAmount: Number,
-            discount: Number,
-            total: Number,
-            currency: { type: String, default: 'SAR' },
-            status: { 
-                type: String, 
-                enum: ['draft', 'sent', 'paid', 'overdue', 'cancelled'],
-                default: 'draft'
-            },
-            issueDate: Date,
-            dueDate: Date,
-            paidDate: Date,
-            notes: String,
-            createdAt: { type: Date, default: Date.now }
-        });
-        Invoice = mongoose.model('Invoice', invoiceSchema);
-    }
-
+// تعريف نموذج الفاتورة (بدون unique على invoice_number)
+let Invoice;
+try {
+    Invoice = mongoose.model('Invoice');
+} catch (error) {
+    const invoiceSchema = new mongoose.Schema({
+        invoiceNumber: { type: String }, // أزلنا unique: true
+        clientName: String,
+        clientEmail: String,
+        clientPhone: String,
+        projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
+        projectName: String,
+        items: [{
+            description: String,
+            quantity: Number,
+            unitPrice: Number,
+            total: Number
+        }],
+        subtotal: Number,
+        taxRate: Number,
+        taxAmount: Number,
+        discount: Number,
+        total: Number,
+        currency: { type: String, default: 'SAR' },
+        status: { 
+            type: String, 
+            enum: ['draft', 'sent', 'paid', 'overdue', 'cancelled'],
+            default: 'draft'
+        },
+        issueDate: Date,
+        dueDate: Date,
+        paidDate: Date,
+        notes: String,
+        createdAt: { type: Date, default: Date.now }
+    });
+    Invoice = mongoose.model('Invoice', invoiceSchema);
+}
     // GET /api/invoices - جلب جميع الفواتير
     app.get('/api/invoices', async (req, res) => {
         try {
