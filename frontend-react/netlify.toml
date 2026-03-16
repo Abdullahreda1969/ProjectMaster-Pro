@@ -1,11 +1,19 @@
 [build]
+  base = "frontend-react"
   publish = "dist"
   command = "npm run build"
 
 [build.environment]
   NODE_VERSION = "18"
 
+# توجيه جميع الطلبات إلى index.html (لـ React Router)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# إضافة رؤوس للتخزين المؤقت
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
