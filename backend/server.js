@@ -1122,6 +1122,7 @@ try {
 
     // Start the server
     const server = app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 السيرفر يعمل على http://0.0.0.0:${PORT}`);
         console.log('\n' + '='.repeat(60));
         console.log('🚀 PROJECTMASTER PRO - MONGODB ATLAS EDITION');
         console.log('='.repeat(60));
