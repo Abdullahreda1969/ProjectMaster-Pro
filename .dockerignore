@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+frontend-react/node_modules/
+
+# Environment
+.env
+.env.local
+frontend-react/.env
+
+# Build outputs
+dist/
+build/
+frontend-react/dist/
+frontend-react/build/
+
+# Logs and backups
+logs/
+backups/
+uploads/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+frontend-react/.env.production
+
+frontend-react/.env.production
+
+backend/.env
+
+frontend-react/.env
