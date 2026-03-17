@@ -1,15 +1,15 @@
-# fly.toml app configuration file generated for projectmaster-pro on 2026-03-17T14:48:19Z
+# fly.toml app configuration file generated for projectmaster-pro-fldq5w on 2026-03-17T17:18:31Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'projectmaster-pro'
-primary_region = 'iad'
+app = 'projectmaster-pro-fldq5w'
+primary_region = 'ams'
 
 [build]
 
 [http_service]
-  internal_port = 3000
+  internal_port = 8080
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
@@ -20,4 +20,4 @@ primary_region = 'iad'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 1024
+  memory_mb = 256
