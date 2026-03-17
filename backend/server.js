@@ -37,15 +37,24 @@ directories.forEach(dir => {
 });
 
 // Middleware
+// CORS configuration - متسامح للإنتاج
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173', 'http://localhost:8080'],
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:3001', 
+        'http://localhost:5173',
+        'http://localhost:8080',
+        'https://69b9cd5597aebcce661fa8f3--projectmaster-pro.netlify.app', // رابط Netlify الخاص بك
+        'https://projectmaster-pro.netlify.app' // الرابط الأساسي
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
+// إضافة middleware للتعامل مع CORS بشكل صريح
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
