@@ -44,8 +44,8 @@ app.use(cors({
         'http://localhost:3001', 
         'http://localhost:5173',
         'http://localhost:8080',
-        'https://69b9cd5597aebcce661fa8f3--projectmaster-pro.netlify.app', // رابط Netlify الخاص بك
-        'https://projectmaster-pro.netlify.app' // الرابط الأساسي
+        'https://projectmaster-pro.netlify.app',
+        'https://abdullahreda-portfolio.netlify.app' 
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
