@@ -1,5 +1,8 @@
 app = "projectmaster-pro-fldq5w"
 
+[build]
+  builder = "heroku/buildpacks:22"
+
 [env]
   PORT = "8080"
 

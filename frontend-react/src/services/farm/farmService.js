@@ -1,11 +1,11 @@
-import axios from 'axios';
+import api from 'api';
 
 const API_URL = 'http://localhost:3000/api';
 
 // جلب جميع المزارع
 export const getFarms = async () => {
     try {
-        const response = await axios.get(`${API_URL}/farms`);
+        const response = await api.get(`${API_URL}/farms`);
         return response.data.farms;
     } catch (error) {
         console.error('❌ خطأ في جلب المزارع:', error);
@@ -16,7 +16,7 @@ export const getFarms = async () => {
 // جلب مزرعة محددة
 export const getFarmById = async (id) => {
     try {
-        const response = await axios.get(`${API_URL}/farms/${id}`);
+        const response = await api.get(`${API_URL}/farms/${id}`);
         return response.data.farm;
     } catch (error) {
         console.error('❌ خطأ في جلب المزرعة:', error);
@@ -27,7 +27,7 @@ export const getFarmById = async (id) => {
 // إضافة مزرعة جديدة
 export const addFarm = async (farmData) => {
     try {
-        const response = await axios.post(`${API_URL}/farms`, farmData);
+        const response = await api.post(`${API_URL}/farms`, farmData);
         return response.data;
     } catch (error) {
         console.error('❌ خطأ في إضافة المزرعة:', error);
@@ -38,7 +38,7 @@ export const addFarm = async (farmData) => {
 // تحديث مزرعة
 export const updateFarm = async (id, farmData) => {
     try {
-        const response = await axios.put(`${API_URL}/farms/${id}`, farmData);
+        const response = await api.put(`${API_URL}/farms/${id}`, farmData);
         return response.data;
     } catch (error) {
         console.error('❌ خطأ في تحديث المزرعة:', error);
@@ -49,7 +49,7 @@ export const updateFarm = async (id, farmData) => {
 // حذف مزرعة
 export const deleteFarm = async (id) => {
     try {
-        const response = await axios.delete(`${API_URL}/farms/${id}`);
+        const response = await api.delete(`${API_URL}/farms/${id}`);
         return response.data;
     } catch (error) {
         console.error('❌ خطأ في حذف المزرعة:', error);
@@ -58,7 +58,7 @@ export const deleteFarm = async (id) => {
 };
 export const getNdviReadings = async (farmId) => {
     try {
-        const response = await axios.get(`${API_URL}/farms/${farmId}/ndvi`);
+        const response = await api.get(`${API_URL}/farms/${farmId}/ndvi`);
         return response.data.readings;
     } catch (error) {
         console.error('❌ خطأ في جلب قراءات NDVI:', error);
@@ -69,7 +69,7 @@ export const getNdviReadings = async (farmId) => {
 // إضافة قراءة NDVI
 export const addNdviReading = async (farmId, readingData) => {
     try {
-        const response = await axios.post(`${API_URL}/farms/${farmId}/ndvi`, readingData);
+        const response = await api.post(`${API_URL}/farms/${farmId}/ndvi`, readingData);
         return response.data;
     } catch (error) {
         console.error('❌ خطأ في إضافة قراءة NDVI:', error);
@@ -80,7 +80,7 @@ export const addNdviReading = async (farmId, readingData) => {
 // جلب سجلات الطقس
 export const getWeatherRecords = async (farmId) => {
     try {
-        const response = await axios.get(`${API_URL}/farms/${farmId}/weather`);
+        const response = await api.get(`${API_URL}/farms/${farmId}/weather`);
         return response.data.records;
     } catch (error) {
         console.error('❌ خطأ في جلب سجلات الطقس:', error);
