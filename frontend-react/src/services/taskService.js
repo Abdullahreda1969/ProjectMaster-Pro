@@ -1,4 +1,4 @@
-import api from './api';
+import api from 'api';
 
 // جلب جميع المهام
 export const getTasks = async () => {
