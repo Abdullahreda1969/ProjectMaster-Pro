@@ -9,7 +9,7 @@
 # إعادة توجيه جميع طلبات /api إلى Fly.io
 [[redirects]]
   from = "/api/*"
-  to = "https://projectmaster-pro-fldq5w.fly.dev/api/:splat"
+  to = "https://projectmaster-pro-production.up.railway.app/api/:splat"
   status = 200
   force = true
 
