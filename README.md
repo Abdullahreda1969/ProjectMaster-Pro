@@ -20,6 +20,7 @@
 ## 🚀 كيفية التشغيل
 
 ### المتطلبات الأساسية
+
 - Node.js (v18 أو أحدث)
 - MongoDB Atlas (أو MongoDB محلي)
 
@@ -30,6 +31,7 @@
    git clone https://github.com/your-username/ProjectMaster-Pro.git
    cd ProjectMaster-Pro
    شغل الباك إند
+   ```
 
 bash
 npm install
@@ -42,8 +44,21 @@ npm install
 npm run dev
 افتح المتصفح
 
+📋 الأوامر الأساسية للفروع
+الأمر الوصف
+git branch عرض الفروع الموجودة
+git branch new-feature إنشاء فرع جديد
+git checkout new-feature التبديل لفرع معين
+git checkout -b new-feature إنشاء والتبديل للفرع الجديد (خطوة واحدة)
+git push -u origin new-feature رفع الفرع لأول مرة
+git merge new-feature دمج فرع مع الفرع الحالي
+git branch -d new-feature حذف فرع محلياً
+git push origin --delete new-feature حذف فرع من GitHub
+
 في نهاية كل يوم عمل
+
 # حفظ كل التغييرات قبل الإغلاق
+
 git add .
 git commit -m "🔨 حفظ آخر التغييرات"
 git push

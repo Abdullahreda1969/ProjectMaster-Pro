@@ -6,7 +6,14 @@
 [build.environment]
   NODE_VERSION = "18"
 
-# توجيه جميع الطلبات إلى index.html (لـ React Router)
+# إعادة توجيه جميع طلبات /api إلى Fly.io
+[[redirects]]
+  from = "/api/*"
+  to = "https://projectmaster-pro-fldq5w.fly.dev/api/:splat"
+  status = 200
+  force = true
+
+# توجيه جميع الطلبات الأخرى إلى index.html (لـ React Router)
 [[redirects]]
   from = "/*"
   to = "/index.html"

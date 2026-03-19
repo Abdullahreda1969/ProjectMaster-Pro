@@ -37,20 +37,16 @@ directories.forEach(dir => {
 });
 
 // Middleware
-// CORS configuration - متسامح للإنتاج
+// CORS configuration - متسامح مع أي نطاق (للعرض)
 app.use(cors({
-    origin: [
-        'http://localhost:3000',
-        'http://localhost:3001', 
-        'http://localhost:5173',
-        'http://localhost:8080',
-        'https://projectmaster-pro.netlify.app',
-        'https://abdullahreda-portfolio.netlify.app' 
-    ],
+    origin: true, // هذا يعني "اقبل من أي نطاق"
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// إضافة middleware إضافي للتعامل مع أي طلب OPTIONS
+app.options('*', cors());
 
 // إضافة middleware للتعامل مع CORS بشكل صريح
 app.use((req, res, next) => {
